@@ -1,0 +1,29 @@
+name: Generate Pacman Contribution Graph
+
+on:
+  schedule:
+    - cron: "0 0 * * *"   # runs daily at midnight
+  workflow_dispatch:       # allow manual runs
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Generate Pacman graph
+        uses: yoshi389111/github-profile-3d-contrib@main
+        with:
+          github_user_name: pranavmarjara
+          output_dir: ./output
+
+      - name: Push to output branch
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git checkout --orphan output
+          git reset
+          mv output/* ./
+          git add .
+          git commit -m "Update Pacman graph"
+          git push -f origin output
